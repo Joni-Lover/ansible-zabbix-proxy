@@ -113,10 +113,12 @@ DBPassword={{ zabbix_proxy_dbpassword }}
 #	Path to MySQL socket.
 #
 
+{% if zabbix_proxy_dbport is defined and zabbix_proxy_dbport %}
 # Option: DBPort
 #	Database port when not using local socket. Ignored for SQLite.
 #
 DBPort={{ zabbix_proxy_dbport }}
+{% endif %}
 
 ######### PROXY SPECIFIC PARAMETERS #############
 

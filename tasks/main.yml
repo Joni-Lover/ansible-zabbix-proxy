@@ -80,3 +80,46 @@
     name: zabbix-proxy
     state: started
     enabled: yes
+
+- name: "Install local python-netaddr package"
+  pip:
+    name: netaddr
+    state: present
+  register: zabbix_python_netaddr_package_installed
+  until: zabbix_python_netaddr_package_installed is succeeded
+  delegate_to: localhost
+  become: "{{ zabbix_proxy_become_on_localhost }}"
+  when:
+    - zabbix_install_pip_packages
+    - ansible_all_ipv4_addresses is defined
+    - zabbix_api_create_proxy
+
+- name: "Installing the Zabbix-api package on localhost"
+  pip:
+    name: zabbix-api
+    state: present
+  register: zabbix_api_package_installed
+  until: zabbix_api_package_installed is succeeded
+  delegate_to: localhost
+  become: "{{ zabbix_proxy_become_on_localhost }}"
+  when:
+    - zabbix_install_pip_packages
+    - zabbix_api_create_proxy
+
+- name: "Create a new proxy or update an existing host's info"
+  zabbix_proxy:
+    server_url: "{{ zabbix_url }}"
+    login_user: "{{ zabbix_api_user }}"
+    login_password: "{{ zabbix_api_pass }}"
+    proxy_name: "{{ zabbix_agent_hostname }}"
+    description: "{{ zabbix_agent_hostname }}"
+    status: "{{ 'active' if zabbix_proxy_mode == 0 else 'passive' }}"
+    state: present
+    interface: "{{ zabbix_proxy_interface }}"
+  when:
+    - zabbix_api_create_proxy
+  delegate_to: localhost
+  become: no
+  changed_when: false
+  tags:
+    - api

@@ -31,6 +31,8 @@ zabbix_proxy_database: mysql
 zabbix_proxy_database_long: mysql
 # zabbix_proxy_database: pgsql
 # zabbix_proxy_database_long: postgresql
+# zabbix_proxy_database: sqlite3
+# zabbix_proxy_database_long:
 
 # zabbix-proxy specifc vars
 zabbix_proxy_mode: 0
@@ -92,6 +94,21 @@ zabbix_proxy_allowroot: 0
 zabbix_proxy_include: /etc/zabbix/zabbix_proxy.conf.d
 zabbix_proxy_libdir: /usr/lib/zabbix
 zabbix_proxy_loadmodulepath: "{{ zabbix_proxy_libdir }}/modules"
+
+zabbix_url: "http://zabbix.dj-wasabi.local"
+zabbix_api_user: Admin
+zabbix_api_pass: zabbix
+zabbix_api_create_proxy: true
+zabbix_install_pip_packages: true
+zabbix_proxy_become_on_localhost: true
+
+zabbix_proxy_interface:
+    type: 1
+    main: 1
+    useip: "{{ zabbix_useuip }}"
+    ip: "{{ zabbix_agent_ip }}"
+    dns: "{{ ansible_fqdn }}"
+    port: "{{ zabbix_proxy_listenport }}"
 
 # TLS settings
 zabbix_proxy_tlsconnect:
